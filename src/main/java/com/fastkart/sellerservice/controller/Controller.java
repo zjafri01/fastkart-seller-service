@@ -4,10 +4,16 @@ import com.fastkart.sellerservice.model.Product;
 import com.fastkart.sellerservice.model.User;
 import com.fastkart.sellerservice.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -52,6 +58,13 @@ public class Controller {
 
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.addProduct(product));
+    }
+
+    @PostMapping("/addProducts/importFile")
+    public ResponseEntity<String> sellerAddProductImportFile(@RequestParam("file") MultipartFile excelDataFile) throws IOException {
+        log.info("Request received to add seller products from Excel File");
+
+        return ResponseEntity.status(HttpStatus.OK).body(userService.addProductsFromFile(excelDataFile));
     }
 
 }

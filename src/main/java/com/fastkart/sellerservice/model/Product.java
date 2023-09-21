@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "product_table")
@@ -32,6 +33,9 @@ public class Product {
     private String name;
 
     @Column
+    private String category;
+
+    @Column
     private String description;
 
     @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
@@ -44,7 +48,8 @@ public class Product {
     @Column
     private Double current_bid_amt;
 
-//    @Column
-//    private BiddingAmtHistory listOfBiddersBiddingAmtHistory;
+    @OneToMany
+    @JoinColumn(name = "bid_id", referencedColumnName = "id")
+    private List<Bid> bid;
 
 }
