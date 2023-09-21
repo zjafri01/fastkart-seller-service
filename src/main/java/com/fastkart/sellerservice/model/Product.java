@@ -1,0 +1,50 @@
+package com.fastkart.sellerservice.model;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+
+@Entity
+@Table(name = "product_table")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator="product_sequence")
+    @SequenceGenerator(name = "product_sequence", sequenceName = "product_sequence")
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JsonIgnore
+    private User user;
+
+    private String username;
+
+    @Column
+    private String name;
+
+    @Column
+    private String description;
+
+    @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
+    @Column
+    private String listed_datetime;
+
+    @Column
+    private Double min_bid_amt_seller;
+
+    @Column
+    private Double current_bid_amt;
+
+//    @Column
+//    private BiddingAmtHistory listOfBiddersBiddingAmtHistory;
+
+}
