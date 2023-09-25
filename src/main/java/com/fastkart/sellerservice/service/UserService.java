@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -40,22 +41,23 @@ public class UserService {
         return userProducts;
     }
 
-    public String addProduct(Product product){
+    public Product addProduct(Product product){
         User userDetails = null;
 
         try{
             userDetails = userDetailsRepository.findByUsername(product.getUsername());
             product.setUser(userDetails);
             product.setCurrent_bid_amt(product.getMin_bid_amt_seller());
-            productRepository.save(product);
+            product.setListed_datetime(new Date().toString());
+            product.setBid(List.of());
         }
         catch (NullPointerException e){
             return null;
         }
-        return "Product Added!!!";
+        return productRepository.save(product);
     }
 
-    public String addProductsFromFile(MultipartFile excelDataFile) throws IOException {
+    public String addProductsFromFile(MultipartFile excelDataFile, String username) throws IOException {
 
         User userDetails = null;
         List<Product> productList = new ArrayList<>();
@@ -67,12 +69,12 @@ public class UserService {
 
             XSSFRow row = worksheet.getRow(i);
 
-            product.setUsername(row.getCell(0).getStringCellValue());
-            product.setName(row.getCell(1).getStringCellValue());
-            product.setCategory(row.getCell(2).getStringCellValue());
-            product.setDescription(row.getCell(3).getStringCellValue());
-            product.setMin_bid_amt_seller(row.getCell(4).getNumericCellValue());
-            product.setListed_datetime(row.getCell(5).getStringCellValue());
+            product.setUsername(username);
+            product.setName(row.getCell(0).getStringCellValue());
+            product.setCategory(row.getCell(1).getStringCellValue());
+            product.setDescription(row.getCell(2).getStringCellValue());
+            product.setMin_bid_amt_seller(row.getCell(3).getNumericCellValue());
+            product.setListed_datetime(new Date().toString());
             product.setCurrent_bid_amt(product.getMin_bid_amt_seller());
             productList.add(product);
         }

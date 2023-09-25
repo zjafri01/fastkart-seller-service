@@ -1,21 +1,22 @@
 package com.fastkart.sellerservice.controller;
 
+import com.fastkart.sellerservice.config.CustomMultipartFile;
 import com.fastkart.sellerservice.model.Product;
 import com.fastkart.sellerservice.model.User;
 import com.fastkart.sellerservice.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.tomcat.util.http.fileupload.FileItem;
+import org.apache.tomcat.util.http.fileupload.disk.DiskFileItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 @RestController
 @RequestMapping("/seller")
@@ -53,18 +54,31 @@ public class Controller {
     }
 
     @PostMapping("/addProducts")
-    public ResponseEntity<String> sellerAddProduct(@RequestBody Product product){
-        log.info("Request received to add seller products");
+    public ResponseEntity<Object> sellerAddProduct(@RequestBody Product product){
+        log.info("Request received to add seller product");
 
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.addProduct(product));
     }
 
-    @PostMapping("/addProducts/importFile")
-    public ResponseEntity<String> sellerAddProductImportFile(@RequestParam("file") MultipartFile excelDataFile) throws IOException {
+    @PostMapping("/addProducts/importFile/direct")
+    public ResponseEntity<String> sellerAddProductImportFileDirect(@RequestParam("file") MultipartFile excelDataFile, @RequestParam("username") String username) throws IOException {
         log.info("Request received to add seller products from Excel File");
 
-        return ResponseEntity.status(HttpStatus.OK).body(userService.addProductsFromFile(excelDataFile));
+        /*LocalDateTime date = LocalDateTime.parse(new Date().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S"));
+        System.out.println(date); //Mon Sep 25 13:52:26 IST 2023*/
+
+        return ResponseEntity.status(HttpStatus.OK).body(userService.addProductsFromFile(excelDataFile, username));
     }
+
+    //@PostMapping(path = ("/addProducts/importFile"), consumes = {"multipart/form-data"})
+    /*@PostMapping("/addProducts/importFile")
+    public ResponseEntity<String> sellerAddProductImportFile(@RequestParam("file") byte[] excelDataFileBytes) throws IOException {
+        log.info("Request received to add seller products from Excel File");
+
+        //FileItem fileItem = new DiskFileItem("fileData", "application/pdf",true, outputFile.getName(), 100000000, new java.io.File(System.getProperty("java.io.tmpdir")));
+        MultipartFile multipartFile = new CustomMultipartFile();
+        return ResponseEntity.status(HttpStatus.OK).body(userService.addProductsFromFile(multipartFile));
+    }*/
 
 }
